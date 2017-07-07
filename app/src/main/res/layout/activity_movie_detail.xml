@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="150dp"
+      android:background="@android:color/holo_blue_light"
+      >
+
+    <TextView
+        android:id="@+id/txtMovieTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
+        android:textColor="@android:color/white"
+        android:textSize="32sp"
+        tools:text="Chappie"
+        />
+
+  </FrameLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="200dp"
+      android:orientation="horizontal"
+      android:baselineAligned="false"
+      android:layout_marginTop="8dp"
+      android:maxHeight="200dp"
+      >
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.4"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        >
+      <ImageView
+          android:id="@+id/imgMovie"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@android:drawable/ic_menu_edit"
+          tools:ignore="ContentDescription"
+          />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        >
+      <TextView
+          android:id="@+id/txtYear"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          tools:text="Lorem Ipsum"
+          />
+
+      <TextView
+          android:id="@+id/txtDuration"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          tools:text="Lorem Ipsum"
+          android:visibility="gone"
+          />
+
+      <TextView
+          android:id="@+id/txtRating"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textColor="@android:color/black"
+          tools:text="Lorem Ipsum"
+          />
+
+
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="MARK AS FAVORITE"
+          />
+
+    </LinearLayout>
+
+  </LinearLayout>
+
+  <TextView
+      android:id="@+id/txtSynopsis"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      tools:text="Lorem Ipsum"
+      android:padding="16dp"
+      />
+
+</LinearLayout>
