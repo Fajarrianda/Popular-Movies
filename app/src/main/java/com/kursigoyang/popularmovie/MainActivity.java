@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import butterknife.Bind;
@@ -15,9 +14,6 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener {
 
-  public static final String POPULAR = "popularity.desc";
-  public static final String TOP_RATED = "vote_average.desc";
-
   @Bind(R.id.rvContent) RecyclerView rvContent;
   MovieAdapter adapter;
 
@@ -25,11 +21,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
-  }
-
-  @Override protected void onStart() {
-    super.onStart();
-    getSupportActionBar().setTitle("Pop Movie");
     init();
     loadDataPopular();
   }
@@ -51,10 +42,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         .subscribe(object -> {
           adapter.pushData(object.getResult());
         }, error -> {
-          Log.d("Error", error.getMessage());
+          ErrorHelper.thrown(this, error, true);
         });
   }
-
 
   private void loadDataTopRated() {
     AppClient.createService(ApiService.class)
@@ -64,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         .subscribe(object -> {
           adapter.pushData(object.getResult());
         }, error -> {
-          Log.d("Error", error.getMessage());
+          ErrorHelper.thrown(this, error, true);
         });
   }
 
@@ -86,6 +76,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
   }
 
   @Override public void onListItemClick(int clickedItemIndex, Movie movie) {
-    MovieDetailActivity.start(this,movie);
+    MovieDetailActivity.start(this, movie);
   }
 }

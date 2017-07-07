@@ -15,19 +15,13 @@ import rx.Observable;
  */
 public interface ApiService {
 
-  @GET(URLCons.URL_GET_POPULAR_MOVIES)
-  Observable<Responses<List<Movie>>> getPopularMovies();
+  @GET(URLCons.URL_GET_POPULAR_MOVIES) Observable<Responses<List<Movie>>> getPopularMovies();
 
-  @GET(URLCons.URL_GET_TOP_RATED_MOVIES)
-  Observable<Responses<List<Movie>>> getTopRatedMovies();
+  @GET(URLCons.URL_GET_TOP_RATED_MOVIES) Observable<Responses<List<Movie>>> getTopRatedMovies();
 
-  @GET(URLCons.URL_GET_TRAILERS)
-  Observable<Responses<List<Video>>> getVideos(@Path("id") int movieId);
+  @GET(URLCons.URL_GET_TRAILERS) Observable<Responses<List<Video>>> getVideos(
+      @Path("id") int movieId);
 
-  @GET(URLCons.URL_GET_REVIEWS)
-  Observable<Responses<List<Review>>> getReviews(@Path("id") int movieId);
-
-
-
-
+  @GET(URLCons.URL_GET_REVIEWS) Observable<Responses<List<Review>>> getReviews(
+      @Path("id") int movieId);
 }

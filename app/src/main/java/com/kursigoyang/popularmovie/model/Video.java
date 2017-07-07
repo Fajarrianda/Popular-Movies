@@ -9,12 +9,31 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Video implements Parcelable {
 
+  public static final Creator<Video> CREATOR = new Creator<Video>() {
+    @Override public Video createFromParcel(Parcel in) {
+      return new Video(in);
+    }
+
+    @Override public Video[] newArray(int size) {
+      return new Video[size];
+    }
+  };
+
   @SerializedName("id") private String id;
   @SerializedName("key") private String key;
   @SerializedName("name") private String name;
   @SerializedName("site") private String site;
   @SerializedName("size") private int size;
   @SerializedName("type") private String type;
+
+  protected Video(Parcel in) {
+    id = in.readString();
+    key = in.readString();
+    name = in.readString();
+    site = in.readString();
+    size = in.readInt();
+    type = in.readString();
+  }
 
   public String getId() {
     return id;
@@ -64,15 +83,6 @@ public class Video implements Parcelable {
     this.type = type;
   }
 
-  protected Video(Parcel in) {
-    id = in.readString();
-    key = in.readString();
-    name = in.readString();
-    site = in.readString();
-    size = in.readInt();
-    type = in.readString();
-  }
-
   @Override public void writeToParcel(Parcel dest, int flags) {
     dest.writeString(id);
     dest.writeString(key);
@@ -85,14 +95,4 @@ public class Video implements Parcelable {
   @Override public int describeContents() {
     return 0;
   }
-
-  public static final Creator<Video> CREATOR = new Creator<Video>() {
-    @Override public Video createFromParcel(Parcel in) {
-      return new Video(in);
-    }
-
-    @Override public Video[] newArray(int size) {
-      return new Video[size];
-    }
-  };
 }

@@ -23,25 +23,24 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
   private List<Movie> listData = new ArrayList<>();
   private ListItemClickListener mOnClickListener;
 
-  public interface ListItemClickListener {
-    void onListItemClick(int clickedItemIndex, Movie movie);
-  }
-
   public MovieAdapter(Context context) {
     this.context = context;
   }
 
-  public void setOnListItemClickListener(ListItemClickListener listItemClickListener){
-      mOnClickListener = listItemClickListener;
+  public void setOnListItemClickListener(ListItemClickListener listItemClickListener) {
+    mOnClickListener = listItemClickListener;
   }
 
   @Override public MovieHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    return new MovieHolder(LayoutInflater.from(context).inflate(R.layout.list_item_movie, parent, false));
+    return new MovieHolder(
+        LayoutInflater.from(context).inflate(R.layout.list_item_movie, parent, false));
   }
 
   @Override public void onBindViewHolder(MovieHolder holder, int position) {
     Movie movie = listData.get(position);
-    Glide.with(context).load(URLCons.URL_BASE_GET_IMAGE.concat(movie.getPoster())).into(holder.imgContent);
+    Glide.with(context)
+        .load(URLCons.URL_BASE_GET_IMAGE.concat(movie.getPoster()))
+        .into(holder.imgContent);
   }
 
   @Override public int getItemCount() {
@@ -54,16 +53,20 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     notifyDataSetChanged();
   }
 
-  class MovieHolder extends RecyclerView.ViewHolder  {
+  public interface ListItemClickListener {
+    void onListItemClick(int clickedItemIndex, Movie movie);
+  }
+
+  class MovieHolder extends RecyclerView.ViewHolder {
 
     @Bind(R.id.imgContent) ImageView imgContent;
 
     public MovieHolder(View itemView) {
       super(itemView);
-      ButterKnife.bind(this,itemView);
+      ButterKnife.bind(this, itemView);
     }
 
-    @OnClick(R.id.imgContent) public void onImageClick(){
+    @OnClick(R.id.imgContent) public void onImageClick() {
       int clickedPosition = getAdapterPosition();
       mOnClickListener.onListItemClick(clickedPosition, listData.get(clickedPosition));
     }

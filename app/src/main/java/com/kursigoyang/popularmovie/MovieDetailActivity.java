@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.Bind;
@@ -36,6 +37,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     setContentView(R.layout.activity_movie_detail);
     ButterKnife.bind(this);
     init();
+    setupToolbar();
   }
 
   private void init() {
@@ -45,11 +47,15 @@ public class MovieDetailActivity extends AppCompatActivity {
     //loadReview(movie.getId());
   }
 
+  private void setupToolbar() {
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+  }
+
   private void setupContent(Movie movie) {
     txtMovieTitle.setText(movie.getTitle());
     txtSynopsis.setText(movie.getOverview());
     txtRating.setText(String.valueOf(movie.getVoteAverage()).concat("/10"));
-    txtYear.setText(movie.getReleaseDate().substring(0,4));
+    txtYear.setText(movie.getReleaseDate().substring(0, 4));
     Glide.with(this).load(URLCons.URL_BASE_GET_IMAGE.concat(movie.getPoster())).into(imgContent);
   }
 
@@ -69,8 +75,12 @@ public class MovieDetailActivity extends AppCompatActivity {
         .subscribe();
   }
 
-  @Override protected void onStart() {
-    super.onStart();
-    getSupportActionBar().setTitle("Pop Movie");
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        finish();
+        break;
+    }
+    return super.onOptionsItemSelected(item);
   }
 }
