@@ -1,5 +1,6 @@
 package com.kursigoyang.popularmovie;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,6 +10,8 @@ import android.view.MenuItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.kursigoyang.popularmovie.model.Movie;
+import java.util.ArrayList;
+import java.util.List;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -58,6 +61,41 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         });
   }
 
+  private void loadDataFavourite() {
+    adapter.clearListData();
+    Cursor cursor =
+        getContentResolver().query(MovieContract.CONTENT_URI, MovieContract.movieProjection, null,
+            null, null);
+    List<Movie> movieList = new ArrayList<>();
+    if (cursor != null) {
+      cursor.moveToFirst();
+      if (cursor.getCount() > 0) {
+        do {
+
+          Movie movie = new Movie();
+          movie.setId(cursor.getInt(cursor.getColumnIndex(MovieContract.COLUMN_NAME_ID)));
+          movie.setTitle(cursor.getString(cursor.getColumnIndex(MovieContract.COLUMN_NAME_TITLE)));
+          movie.setVoteCount(
+              cursor.getString(cursor.getColumnIndex(MovieContract.COLUMN_VOTE_COUNT)));
+          movie.setVoteAverage(
+              cursor.getFloat(cursor.getColumnIndex(MovieContract.COLUMN_VOTE_AVERAGE)));
+          movie.setPoster(
+              cursor.getString(cursor.getColumnIndex(MovieContract.COLUMN_POSTER_PATH)));
+          movie.setBackdrop(
+              cursor.getString(cursor.getColumnIndex(MovieContract.COLUMN_BACKDROP_PATH)));
+          movie.setOverview(cursor.getString(cursor.getColumnIndex(MovieContract.COLUMN_OVERVIEW)));
+          movie.setReleaseDate(
+              cursor.getString(cursor.getColumnIndex(MovieContract.COLUMN_RELEASE_DATE)));
+
+          movieList.add(movie);
+        } while (cursor.moveToNext());
+
+        adapter.pushData(movieList);
+      }
+    }
+    cursor.close();
+  }
+
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.main, menu);
     return true;
@@ -70,6 +108,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         break;
       case R.id.sortTopRated:
         loadDataTopRated();
+        break;
+      case R.id.sortFavourited:
+        loadDataFavourite();
         break;
     }
     return super.onOptionsItemSelected(item);

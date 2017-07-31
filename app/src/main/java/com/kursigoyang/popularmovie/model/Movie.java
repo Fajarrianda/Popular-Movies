@@ -30,6 +30,11 @@ public class Movie implements Parcelable {
   @SerializedName("overview") private String overview;
   @SerializedName("release_date") private String releaseDate;
 
+
+  public Movie(){
+
+  }
+
   protected Movie(Parcel in) {
     voteCount = in.readString();
     id = in.readInt();

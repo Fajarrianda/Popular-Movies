@@ -21,6 +21,11 @@
     </activity>
 
     <activity android:name=".MovieDetailActivity"/>
+
+    <provider
+        android:authorities="com.kursigoyang.popularmovie"
+        android:name="com.kursigoyang.popularmovie.MovieProvider"
+        android:exported="false"/>
   </application>
 
 </manifest>

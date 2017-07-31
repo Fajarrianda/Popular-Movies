@@ -4,13 +4,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,8 +32,9 @@ import rx.schedulers.Schedulers;
  * Created by Fajar Rianda on 26/06/2017.
  */
 public class MovieDetailActivity extends AppCompatActivity
-    implements TrailerAdapter.ListItemClickListener {
+    implements LoaderManager.LoaderCallbacks, TrailerAdapter.ListItemClickListener {
 
+  private static final int MOVIE_LOADER_ID = 0;
   @Bind(R.id.txtMovieTitle) TextView txtMovieTitle;
   @Bind(R.id.txtSynopsis) TextView txtSynopsis;
   @Bind(R.id.txtYear) TextView txtYear;
@@ -39,10 +43,9 @@ public class MovieDetailActivity extends AppCompatActivity
   @Bind(R.id.imgMovie) ImageView imgContent;
   @Bind(R.id.rvTrailer) RecyclerView rvTrailer;
   @Bind(R.id.rvReview) RecyclerView rvReview;
-
   TrailerAdapter trailerAdapter;
   ReviewAdapter reviewAdapter;
-  SQLiteDatabase sqLiteDatabase;
+  //SQLiteDatabase sqLiteDatabase;
   Movie movie;
 
   public static void start(Context context, Movie movie) {
@@ -57,9 +60,9 @@ public class MovieDetailActivity extends AppCompatActivity
     ButterKnife.bind(this);
     init(savedInstanceState);
     setupToolbar();
-
-    SQLiteHelper dbHelper = new SQLiteHelper(this);
-    sqLiteDatabase = dbHelper.getWritableDatabase();
+    //
+    //SQLiteHelper dbHelper = new SQLiteHelper(this);
+    //sqLiteDatabase = dbHelper.getWritableDatabase();
     isFavourited();
   }
 
@@ -135,30 +138,35 @@ public class MovieDetailActivity extends AppCompatActivity
 
   private void addFavourite() {
     ContentValues cv = new ContentValues();
-    cv.put(MovieContract.MovieEntry.COLUMN_NAME_ID, movie.getId());
-    cv.put(MovieContract.MovieEntry.COLUMN_NAME_TITLE, movie.getTitle());
-    cv.put(MovieContract.MovieEntry.COLUMN_FAVOURITED, 1);
+    cv.put(MovieContract.COLUMN_NAME_ID, movie.getId());
+    cv.put(MovieContract.COLUMN_NAME_TITLE, movie.getTitle());
+    cv.put(MovieContract.COLUMN_FAVOURITED, 1);
+    cv.put(MovieContract.COLUMN_VOTE_COUNT, movie.getVoteCount());
+    cv.put(MovieContract.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+    cv.put(MovieContract.COLUMN_POSTER_PATH, movie.getPoster());
+    cv.put(MovieContract.COLUMN_BACKDROP_PATH, movie.getBackdrop());
+    cv.put(MovieContract.COLUMN_OVERVIEW, movie.getOverview());
+    cv.put(MovieContract.COLUMN_RELEASE_DATE, movie.getReleaseDate());
 
-    sqLiteDatabase.insert(MovieContract.MovieEntry.TABLE_NAME, null, cv);
+    //sqLiteDatabase.insert(MovieContract.TABLE_NAME, null, cv);
+    Uri uri = getContentResolver().insert(MovieContract.CONTENT_URI, cv);
+
     btnFavourite.setSelected(true);
     btnFavourite.setTextColor(ContextCompat.getColor(this, android.R.color.white));
   }
 
   private void isFavourited() {
 
-    String selectQuery = "SELECT  * FROM "
-        + MovieContract.MovieEntry.TABLE_NAME
-        + " WHERE "
-        + MovieContract.MovieEntry.COLUMN_NAME_ID
-        + "= "
-        + movie.getId();
-    Cursor cursor = sqLiteDatabase.rawQuery(selectQuery, null);
+    final String where = MovieContract.COLUMN_NAME_ID + "=?";
+    final String[] args = new String[] { String.valueOf(movie.getId()) };
+    Cursor cursor =
+        getContentResolver().query(MovieContract.CONTENT_URI, MovieContract.movieProjection, where,
+            args, null, null);
 
     if (cursor != null) {
       if (cursor.getCount() > 0) {
         cursor.moveToFirst();
-        int favourited =
-            cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_FAVOURITED));
+        int favourited = cursor.getInt(cursor.getColumnIndex(MovieContract.COLUMN_FAVOURITED));
         btnFavourite.setSelected(favourited != 0);
         btnFavourite.setTextColor(favourited != 0
             ? ContextCompat.getColor(this, android.R.color.white)
@@ -168,14 +176,11 @@ public class MovieDetailActivity extends AppCompatActivity
     cursor.close();
   }
 
-  private void updateFavourite() {
-    ContentValues cv = new ContentValues();
-    cv.put(MovieContract.MovieEntry.COLUMN_NAME_ID, movie.getId());
-    cv.put(MovieContract.MovieEntry.COLUMN_NAME_TITLE, movie.getTitle());
-    cv.put(MovieContract.MovieEntry.COLUMN_FAVOURITED, 0);
+  private void deleteFavourite() {
 
-    sqLiteDatabase.update(MovieContract.MovieEntry.TABLE_NAME, cv,
-        MovieContract.MovieEntry.COLUMN_NAME_ID + "=" + movie.getId(), null);
+    getContentResolver().delete(MovieContract.CONTENT_URI,
+        MovieContract.COLUMN_NAME_ID + "=" + movie.getId(), null);
+    getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
     btnFavourite.setSelected(false);
     btnFavourite.setTextColor(ContextCompat.getColor(this, android.R.color.black));
   }
@@ -201,7 +206,48 @@ public class MovieDetailActivity extends AppCompatActivity
     if (!btnFavourite.isSelected()) {
       addFavourite();
     } else {
-      updateFavourite();
+      deleteFavourite();
     }
+  }
+
+  @Override protected void onResume() {
+    super.onResume();
+    getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
+  }
+
+  @Override public Loader onCreateLoader(int id, Bundle args) {
+    return new AsyncTaskLoader<Cursor>(this) {
+      Cursor movieData = null;
+
+      @Override protected void onStartLoading() {
+        if (movieData != null) {
+          deliverResult(movieData);
+        } else {
+          forceLoad();
+        }
+      }
+
+      @Override public Cursor loadInBackground() {
+        try {
+          return getContentResolver().query(MovieContract.CONTENT_URI, null, null, null, null);
+        } catch (Exception e) {
+          Log.e("Error", "Failed to asynchoronusly load data");
+          return null;
+        }
+      }
+
+      public void deliverResult(Cursor data) {
+        movieData = data;
+        super.deliverResult(data);
+      }
+    };
+  }
+
+  @Override public void onLoadFinished(Loader loader, Object data) {
+
+  }
+
+  @Override public void onLoaderReset(Loader loader) {
+
   }
 }
