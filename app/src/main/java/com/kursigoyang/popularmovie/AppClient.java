@@ -32,9 +32,7 @@ public class AppClient {
                 Request original = chain.request();
                 HttpUrl originalHttpUrl = original.url();
 
-                HttpUrl url = originalHttpUrl.newBuilder()
-                    .addQueryParameter("api_key", "[YOUR_API_KEY]")
-                    .build();
+                HttpUrl url = originalHttpUrl.newBuilder().addQueryParameter("api_key", "[YOUR_API_KEY]").build();
 
                 Request.Builder requestBuilder = original.newBuilder().url(url);
 
