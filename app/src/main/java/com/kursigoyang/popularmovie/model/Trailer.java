@@ -7,15 +7,15 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by Fajar Rianda on 06/07/2017.
  */
-public class Video implements Parcelable {
+public class Trailer implements Parcelable {
 
-  public static final Creator<Video> CREATOR = new Creator<Video>() {
-    @Override public Video createFromParcel(Parcel in) {
-      return new Video(in);
+  public static final Creator<Trailer> CREATOR = new Creator<Trailer>() {
+    @Override public Trailer createFromParcel(Parcel in) {
+      return new Trailer(in);
     }
 
-    @Override public Video[] newArray(int size) {
-      return new Video[size];
+    @Override public Trailer[] newArray(int size) {
+      return new Trailer[size];
     }
   };
 
@@ -26,7 +26,7 @@ public class Video implements Parcelable {
   @SerializedName("size") private int size;
   @SerializedName("type") private String type;
 
-  protected Video(Parcel in) {
+  protected Trailer(Parcel in) {
     id = in.readString();
     key = in.readString();
     name = in.readString();

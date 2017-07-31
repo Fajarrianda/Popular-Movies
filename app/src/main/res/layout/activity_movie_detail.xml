@@ -65,6 +65,7 @@
           android:paddingLeft="16dp"
           android:paddingStart="16dp"
           >
+
         <TextView
             android:id="@+id/txtYear"
             android:layout_width="wrap_content"
@@ -91,9 +92,12 @@
 
 
         <Button
+            android:id="@+id/btnFavourite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/mark_as_favorite"
+            android:padding="8dp"
+            android:background="@drawable/bg_favourite_selected"
             />
 
       </LinearLayout>
@@ -108,6 +112,50 @@
         tools:text="Lorem Ipsum"
         />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/black"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="Trailers"
+        android:padding="16dp"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvTrailer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/black"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="Review"
+        android:padding="16dp"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"/>
   </LinearLayout>
 
 </ScrollView>

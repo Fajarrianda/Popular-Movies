@@ -4,7 +4,7 @@ import com.kursigoyang.popularmovie.constant.URLCons;
 import com.kursigoyang.popularmovie.model.Movie;
 import com.kursigoyang.popularmovie.model.Responses;
 import com.kursigoyang.popularmovie.model.Review;
-import com.kursigoyang.popularmovie.model.Video;
+import com.kursigoyang.popularmovie.model.Trailer;
 import java.util.List;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -19,7 +19,7 @@ public interface ApiService {
 
   @GET(URLCons.URL_GET_TOP_RATED_MOVIES) Observable<Responses<List<Movie>>> getTopRatedMovies();
 
-  @GET(URLCons.URL_GET_TRAILERS) Observable<Responses<List<Video>>> getVideos(
+  @GET(URLCons.URL_GET_TRAILERS) Observable<Responses<List<Trailer>>> getVideos(
       @Path("id") int movieId);
 
   @GET(URLCons.URL_GET_REVIEWS) Observable<Responses<List<Review>>> getReviews(
